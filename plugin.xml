@@ -9,7 +9,7 @@
     <keywords>bluetooth low energy, bluetooth smart, ble, peripheral</keywords>
     <license>Apache 2.0</license>
     <js-module src="js/ble-peripheral-manager.js" name="BLEPeripheralManager">
-        <clobbers target="BLEPeripheralManager" />
+        <clobbers target="blePM" />
     </js-module>
 
     <platform name="ios">
@@ -26,11 +26,10 @@
     <platform name="android">
         <config-file target="config.xml" parent="/*">
             <feature name="BLEPeripheralManager">
-                <param name="ios-package" value="BLEPeripheralManager" />
+                <param name="android-package" value="BLEPeripheralManager" />
             </feature>
         </config-file>
-        <header-file src="classes/ios/BLEPeripheralManager.h" />
-        <source-file src="classes/ios/BLEPeripheralManager.m" />
+        <source-file src="classes/ios/BLEPeripheralManager.java" />
         <framework src="CoreBluetooth.framework" />
     </platform>
     

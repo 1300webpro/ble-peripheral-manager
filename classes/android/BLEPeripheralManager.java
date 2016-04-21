@@ -67,12 +67,82 @@ public class BLEPeripheralManager extends CordovaPlugin {
       return false;
   }
 
-  private void addService(String message, CallbackContext callbackContext) {
+  private void addService(JSONObject services, CallbackContext callbackContext) {
       if (message != null && message.length() > 0) {
           callbackContext.success(message);
       } else {
           callbackContext.error("Expected one non-empty string argument.");
       }
+      
+      
+      for( service in services){
+          BluetoothGattService service =
+            new BluetoothGattService(SERVICE_UUID, SERVICE_TYPE_PRIMARY);
+            
+          for ( characteristic in service.characteristics){
+              BluetoothGattCharacteristic dimmerCharacteristic =
+                new BluetoothGattCharacteristic(
+                  DIMMER_UUID,
+                  PROPERTY_READ | PROPERTY_WRITE,
+                  PERMISSION_READ | PERMISSION_WRITE);
+          }
+      }
+      
+      
+
+
+      
+      
+      
+      
+      for each service:
+
+// GATT
+private BluetoothGattService mServices;
+private BluetoothGattCharacteristic mCharacteristics;
+
+public ServiceFragment() {
+
+private static final UUID BATTERY_SERVICE_UUID = UUID
+      .fromString("0000180F-0000-1000-8000-00805f9b34fb");
+
+  // for each characteristic
+    mCharacteristic =
+        new BluetoothGattCharacteristic(BATTERY_LEVEL_UUID,
+            BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY,
+            BluetoothGattCharacteristic.PERMISSION_READ);
+
+    mCharacteristic.addDescriptor(
+        Peripheral.getClientCharacteristicConfigurationDescriptor());
+        
+  //Add the service
+
+  mService = new BluetoothGattService(BATTERY_SERVICE_UUID,
+      BluetoothGattService.SERVICE_TYPE_PRIMARY);
+      
+      
+  //Add the characteristics to the service
+  mService.addCharacteristic(mCharacteristic);
+  
+  
+  
+  
+  
+  mAdvSettings = new AdvertiseSettings.Builder()
+        .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+        .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
+        .setConnectable(true)
+        .build();
+    mAdvData = new AdvertiseData.Builder()
+        .setIncludeDeviceName(true)
+        .setIncludeTxPowerLevel(true)
+        .addServiceUuid(mService.getServiceUUID())
+        .build();
+  
+  
+}
+      
+      
   }
   
   private void startAdvertising(String message, CallbackContext callbackContext) {

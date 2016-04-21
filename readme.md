@@ -4,7 +4,7 @@ This plugin is only for Bluetooth Peripheral Manager functionality. If you're lo
 
 ## Methods
 
-### BLEPeripheralManager.addService(service, successCallback)
+### blePM.addService(service, successCallback)
 
 Creates a service from an object you pass. All object parameters are required. You may call this multiple times to add multiple services, but all services must be added before you start advertising. This method is asynchronous, so pass a function to the success callback for any code you may need to run after the service has been added, which includes the startAdvertising method.
 
@@ -14,23 +14,23 @@ Creates a service from an object you pass. All object parameters are required. Y
 - primary: True or false as to whether this is the primary service for your app. True if you are only running one service.
 - characteristics: An array of characteristics for this service. Each characteristic has two parameters, UUID and value, that are both strings. Characteristic values must be a string, not null, an array or an object. See example.
 
-### BLEPeripheralManager.startAdvertising('deviceName', successCallback)
+### blePM.startAdvertising('deviceName', successCallback)
 
 Begin advertising. This must be called after at least one service has been created, so make sure to run this in the callback of the addService method. Pass in any string to represent the name of your device. This method is asynchronous, so pass a function to the success callback for any code you may need to run after advertising has begun.
 
-### BLEPeripheralManager.stopAdvertising()
+### blePM.stopAdvertising()
 
 Stops all advertising.
 
-### BLEPeripheralManager.removeAllServices()
+### blePM.removeAllServices()
 
 Removes all services from a class. 
 
-### BLEPeripheralManager.changeCharacteristic(characteristic_uuid, value, successCallback, errorCallback)
+### blePM.changeCharacteristic(characteristic_uuid, value, successCallback, errorCallback)
 
 Change the value of the characteristic after it has started.
 
-### BLEPeripheralManager.monitorCharacteristic(characteristic_uuid,onChangeCallback, successCallback, errorCallback)
+### blePM.monitorCharacteristic(characteristic_uuid,onChangeCallback, successCallback, errorCallback)
 
 Attach a function to monitor the characteristic. onChangeCallback accepts 2 arguments which is the characteristic_uuid and the new value
 
@@ -53,15 +53,15 @@ Attach a function to monitor the characteristic. onChangeCallback accepts 2 argu
 	};
 
 	// Add your service
-	BLEPeripheralManager.addService(service, function success() {
+	blePM.addService(service, function success() {
 		// Start advertising services
-		BLEPeripheralManager.startAdvertising('aNameForYourDevice', function success() {
+		blePM.startAdvertising('aNameForYourDevice', function success() {
 			console.log('Advertising!');
 		});
 	}
 
 	// Stop advertising when finished
-	BLEPeripheralManager.stopAdvertising();
+	blePM.stopAdvertising();
 
 	// Remove all services
-	BLEPeripheralManager.removeAllServices();
+	blePM.removeAllServices();

@@ -1,4 +1,4 @@
-var BLEPeripheralManager = (function() {
+var blePM = (function() {
 
     /**
     * Private Variables
