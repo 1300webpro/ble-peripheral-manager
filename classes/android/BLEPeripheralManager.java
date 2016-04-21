@@ -93,7 +93,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
 
       
       
-      
+      /*
       
       for each service:
 
@@ -141,7 +141,7 @@ private static final UUID BATTERY_SERVICE_UUID = UUID
   
   
 }
-      
+      */
       
   }
   
