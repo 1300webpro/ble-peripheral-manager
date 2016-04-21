@@ -26,7 +26,7 @@
     <platform name="android">
         <config-file target="config.xml" parent="/*">
             <feature name="BLEPeripheralManager">
-                <param name="android-package" value="com.nge.BLEPeripheralManager" />
+                <param name="android-package" value="com.nge.BLEPeripheralManager.BLEPeripheralManager" />
             </feature>
         </config-file>
         <source-file src="src/android/BLEPeripheralManager.java" target-dir="src/com/nge/BLEPeripheralManager"/>

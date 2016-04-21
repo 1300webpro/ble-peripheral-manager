@@ -1,4 +1,4 @@
-package org.apache.cordova.plugin;
+package com.nge.BLEPeripheralManager;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -6,6 +6,8 @@ import org.apache.cordova.CallbackContext;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.util.Log;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -21,12 +23,13 @@ import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.BluetoothLeAdvertiser;
 
+
 /**
 * This class echoes a string called from JavaScript.
 */
 public class BLEPeripheralManager extends CordovaPlugin {
 
-  
+  private static final String TAG = "BLEPeripheralManager";
 
 
   private BluetoothGattService[] mServices;
@@ -41,9 +44,10 @@ public class BLEPeripheralManager extends CordovaPlugin {
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
   
       if (action.equals("addService")) {
-      
-          JSONObject services = args.getJSONObject(0);
-          this.addService(services, callbackContext);
+          Log.v(TAG, "addService");
+          return true;
+          //JSONObject services = args.getJSONObject(0);
+          //this.addService(services, callbackContext);
           return true;
       } else if (action.equals("startAdvertising")) {
           this.startAdvertising(args.getString(0), callbackContext);

@@ -23,11 +23,11 @@ var blePM = (function() {
         var jsonService = JSON.stringify(service);
 
         cordova.exec(
-            function success() {
+            function success(data) {
             
-            
+                alert('hello2');
                 if(successCallback) {
-                        successCallback();
+                        successCallback(data);
                     }
             
                 /*function serviceAdded() {
@@ -219,4 +219,4 @@ var blePM = (function() {
 
 })();
 
-module.exports = BLEPeripheralManager;
+module.exports = blePM;
