@@ -1,17 +1,6 @@
 # BLE Peripheral Manager Plugin for PhoneGap
 
-This is my first PhoneGap plugin and first experience with Objective-C. It's a rough start, so I greatly appreciate any feedback for improving the code. There's a lot left to do to get this plugin up to par.
-
 This plugin is only for Bluetooth Peripheral Manager functionality. If you're looking for Central Manager functionality check out https://github.com/randdusing/BluetoothLE.
-
-## Upcoming Improvements
-
-- ability to update a characteristic's value when Central Manager subscribes
-- improved error handling
-
-## Installation
-
-    phonegap local plugin add https://github.com/2WheelCoder/ble-peripheral-manager.git
 
 ## Methods
 
@@ -35,7 +24,15 @@ Stops all advertising.
 
 ### BLEPeripheralManager.removeAllServices()
 
-Removes all services from a class. Editing services is not yet possible, so you may need to run this to start from scratch if you need to update a service.
+Removes all services from a class. 
+
+### BLEPeripheralManager.changeCharacteristic(characteristic_uuid, value, successCallback, errorCallback)
+
+Change the value of the characteristic after it has started.
+
+### BLEPeripheralManager.monitorCharacteristic(characteristic_uuid,onChangeCallback, successCallback, errorCallback)
+
+Attach a function to monitor the characteristic. onChangeCallback accepts 2 arguments which is the characteristic_uuid and the new value
 
 ## Example Usage
 

@@ -104,7 +104,51 @@ var BLEPeripheralManager = (function() {
             []
         );
     }
+    
+    function changeCharacteristic(characteristic_uuid, value, successCallback, errorCallback) {
+        var characteristic_uuid = characteristic_uuid ? characteristic_uuid : '';
+        var value = value ? value : '';
+    
+        cordova.exec(
+            function success() {
+                function didStartAdvertising(topic) {
+                    console.log('Characteristic Updated');
+                    if (successCallback) {
+                        successCallback();
+                    }
+                }
+            },
+            function error(err) {
+                alert('BLE Peripheral Manager Error');
+            },
+            'BLEPeripheralManager',
+            'changeCharacteristic',
+            [characteristic_uuid,value]
+        );
+    }
 
+    function monitorCharacteristic(characteristic_uuid,onChangeCallback, successCallback, errorCallback) {
+        /*cordova.exec(
+            function success() {
+                function didStartAdvertising(topic) {
+                    console.log('Peripheral Manager Did Start Advertising');
+                    unsubscribe(subscription);
+                    if (successCallback) {
+                        successCallback();
+                    }
+                }
+
+                var subscription = subscribe('didStartAdvertising', didStartAdvertising);
+            },
+            function error(err) {
+                alert('BLE Peripheral Manager Error');
+            },
+            'BLEPeripheralManager',
+            'startAdvertising',
+            [localNameKey]
+        );*/
+    }
+    
 
     /**
     * Pub/Sub Implementation

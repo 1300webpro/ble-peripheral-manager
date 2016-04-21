@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="com.nickstevens.BLEPeripheralManager" version="1.2.1">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="com.nge.BLEPeripheralManager" version="1.2.1">
     <engines>
         <engine name="cordova" version=">=3.0.0" />
     </engines>
     <name>BLE Peripheral Manager</name>
     <description>A phonegap plugin that enables turning an iOS device into a Bluetooth Low Energy peripheral.</description>
-    <author>Nick Stevens</author>
+    <author>NGE Consulting</author>
     <keywords>bluetooth low energy, bluetooth smart, ble, peripheral</keywords>
     <license>Apache 2.0</license>
     <js-module src="js/ble-peripheral-manager.js" name="BLEPeripheralManager">
@@ -22,4 +22,16 @@
         <source-file src="classes/ios/BLEPeripheralManager.m" />
         <framework src="CoreBluetooth.framework" />
     </platform>
+    
+    <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <feature name="BLEPeripheralManager">
+                <param name="ios-package" value="BLEPeripheralManager" />
+            </feature>
+        </config-file>
+        <header-file src="classes/ios/BLEPeripheralManager.h" />
+        <source-file src="classes/ios/BLEPeripheralManager.m" />
+        <framework src="CoreBluetooth.framework" />
+    </platform>
+    
 </plugin>

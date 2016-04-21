@@ -90,8 +90,51 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+-(void)changeCharacteristic:(CDVInvokedUrlCommand *)command {
+      NSData *updatedValue = [command.arguments objectAtIndex:1];// fetch the characteristic's new value as the second argument
+      
+      //Find characteristic based on the uuid
+      CBMutableCharacteristic *characteristic;
+      
+      for (NSArray *services in _peripheralManager.service.characteristics) {
+          for (NSArray *characteristics in services) {
+            if (characteristics.UUID.Uuid == [command.arguments objectAtIndex:0]) {
+                characteristic = characteristics;
+                break;
+            }
+          }
+      }
+
+      //If the characteristic isn't null, then proceed with the update
+      if(characteristic != [NSNull null]){
+
+        //Update the value with the new value
+        BOOL didSendValue = [_peripheralManager updateValue:updatedValue
+
+          forCharacteristic:characteristic onSubscribedCentrals:nil];
+      }
+      
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+-(void)monitorCharacteristic:(CDVInvokedUrlCommand *)command {
+
+}
 
 
+/*
+peripheral
+
+    peripheralManager:didReceiveWriteRequests: :(CBATTRequest *)request {
+
+ 
+
+    if ([request.characteristic.UUID isEqual:myCharacteristic.UUID]) {
+    
+    }
+    
+    }
+*/
 #pragma mark - CBPeripheralManagerDelegate
 
 - (void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral {
