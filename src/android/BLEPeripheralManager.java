@@ -68,14 +68,14 @@ public class BLEPeripheralManager extends CordovaPlugin {
   }
 
   private void addService(JSONObject services, CallbackContext callbackContext) {
-      if (message != null && message.length() > 0) {
-          callbackContext.success(message);
+      if (services != null && services.length() > 0) {
+          callbackContext.success('Yay!');
       } else {
           callbackContext.error("Expected one non-empty string argument.");
       }
       
       
-      for( service in services){
+      /*for( service in services){
           BluetoothGattService service =
             new BluetoothGattService(SERVICE_UUID, SERVICE_TYPE_PRIMARY);
             
@@ -86,7 +86,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
                   PROPERTY_READ | PROPERTY_WRITE,
                   PERMISSION_READ | PERMISSION_WRITE);
           }
-      }
+      }*/
       
       
 
@@ -148,7 +148,7 @@ private static final UUID BATTERY_SERVICE_UUID = UUID
   private void startAdvertising(String message, CallbackContext callbackContext) {
       
 
-      mGattServer = mBluetoothManager.openGattServer(this, mGattServerCallback);
+      /*mGattServer = mBluetoothManager.openGattServer(this, mGattServerCallback);
       if (mGattServer == null) {
         ensureBleFeaturesAvailable();
         return;
@@ -158,18 +158,18 @@ private static final UUID BATTERY_SERVICE_UUID = UUID
       mGattServer.addService(mService);
 
       mAdvertiser = mBluetoothAdapter.getBluetoothLeAdvertiser();
-      mAdvertiser.startAdvertising(mAdvSettings, mAdvData, mAdvCallback);
+      mAdvertiser.startAdvertising(mAdvSettings, mAdvData, mAdvCallback);*/
   }
   
   private void stopAdvertising(String message, CallbackContext callbackContext) {
-      if (mGattServer != null) {
+      /*if (mGattServer != null) {
           mGattServer.close();
       }
       if (mBluetoothAdapter.isEnabled() && mAdvertiser != null) {
           // If stopAdvertising() gets called before close() a null
           // pointer exception is raised.
           mAdvertiser.stopAdvertising(mAdvCallback);
-      }
+      }*/
   }
   
   private void removeAllServices(String message, CallbackContext callbackContext) {

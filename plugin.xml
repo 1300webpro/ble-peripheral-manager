@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="com.nge.BLEPeripheralManager" version="1.2.1">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.nge.BLEPeripheralManager" version="1.2.1">
     <engines>
         <engine name="cordova" version=">=3.0.0" />
     </engines>
@@ -15,7 +15,7 @@
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
             <feature name="BLEPeripheralManager">
-                <param name="ios-package" value="BLEPeripheralManager" />
+                <param name="ios-package" value="blePM" />
             </feature>
         </config-file>
         <header-file src="classes/ios/BLEPeripheralManager.h" />
@@ -29,12 +29,12 @@
                 <param name="android-package" value="com.nge.BLEPeripheralManager" />
             </feature>
         </config-file>
-        <source-file src="classes/android/BLEPeripheralManager.java" target-dir="src/org/apache/cordova/plugin"/>
-        <framework src="CoreBluetooth.framework" />
+        <source-file src="src/android/BLEPeripheralManager.java" target-dir="src/com/nge/BLEPeripheralManager"/>
         
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.BLUETOOTH" />
             <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+            <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="21" />
         </config-file>
 
         
