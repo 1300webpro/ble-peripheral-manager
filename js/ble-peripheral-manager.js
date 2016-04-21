@@ -24,11 +24,9 @@ var blePM = (function() {
 
         cordova.exec(
             function success(data) {
-            
-                alert('hello2');
                 if(successCallback) {
-                        successCallback(data);
-                    }
+                    successCallback(data);
+                }
             
                 /*function serviceAdded() {
                     console.log('service added');

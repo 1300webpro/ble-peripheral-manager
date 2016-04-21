@@ -45,9 +45,8 @@ public class BLEPeripheralManager extends CordovaPlugin {
   
       if (action.equals("addService")) {
           Log.v(TAG, "addService");
-          return true;
-          //JSONObject services = args.getJSONObject(0);
-          //this.addService(services, callbackContext);
+          JSONObject services = args.getJSONObject(0);
+          this.addService(services, callbackContext);
           return true;
       } else if (action.equals("startAdvertising")) {
           this.startAdvertising(args.getString(0), callbackContext);
