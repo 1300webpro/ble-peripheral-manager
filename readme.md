@@ -30,9 +30,9 @@ Removes all services from a class.
 
 Change the value of the characteristic after it has started.
 
-### blePM.monitorCharacteristic(characteristic_uuid,onChangeCallback, successCallback, errorCallback)
+### blePM.monitorCharacteristic(characteristic_uuid, successCallback, errorCallback)
 
-Attach a function to monitor the characteristic. onChangeCallback accepts 2 arguments which is the characteristic_uuid and the new value
+Attach a function to monitor the characteristic. successCallback accepts 2 arguments which is the characteristic_uuid and the new value
 
 ## Example Usage
 

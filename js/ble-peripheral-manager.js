@@ -24,15 +24,21 @@ var blePM = (function() {
 
         cordova.exec(
             function success() {
-                function serviceAdded() {
+            
+            
+                if(successCallback) {
+                        successCallback();
+                    }
+            
+                /*function serviceAdded() {
                     console.log('service added');
                     unsubscribe(subscription);
                     if(successCallback) {
                         successCallback();
                     }
-                }
+                }*/
 
-                var subscription = subscribe('didAddService', serviceAdded);
+                //var subscription = subscribe('didAddService', serviceAdded);
             },
             function error(err) {
                 alert('BLE Peripheral Manager Error');
