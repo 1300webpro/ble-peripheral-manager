@@ -60,7 +60,8 @@ public class BLEPeripheralManager extends CordovaPlugin {
           this.changeCharacteristic(uuid,value, callbackContext);
           return true;
       } else if (action.equals("monitorCharacteristic")) {
-          this.monitorCharacteristic(callbackContext);
+          String uuid = args.getString(0);
+          this.monitorCharacteristic(uuid,callbackContext);
           return true;
       }
       
@@ -69,7 +70,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
 
   private void addService(JSONObject services, CallbackContext callbackContext) {
       if (services != null && services.length() > 0) {
-          callbackContext.success('Yay!');
+          callbackContext.success("Yay!");
       } else {
           callbackContext.error("Expected one non-empty string argument.");
       }
@@ -145,7 +146,7 @@ private static final UUID BATTERY_SERVICE_UUID = UUID
       
   }
   
-  private void startAdvertising(String message, CallbackContext callbackContext) {
+  private void startAdvertising(String device_name, CallbackContext callbackContext) {
       
 
       /*mGattServer = mBluetoothManager.openGattServer(this, mGattServerCallback);
@@ -161,7 +162,7 @@ private static final UUID BATTERY_SERVICE_UUID = UUID
       mAdvertiser.startAdvertising(mAdvSettings, mAdvData, mAdvCallback);*/
   }
   
-  private void stopAdvertising(String message, CallbackContext callbackContext) {
+  private void stopAdvertising(CallbackContext callbackContext) {
       /*if (mGattServer != null) {
           mGattServer.close();
       }
@@ -172,15 +173,15 @@ private static final UUID BATTERY_SERVICE_UUID = UUID
       }*/
   }
   
-  private void removeAllServices(String message, CallbackContext callbackContext) {
+  private void removeAllServices(CallbackContext callbackContext) {
   
   }
   
-  private void changeCharacteristic(String message, CallbackContext callbackContext) {
+  private void changeCharacteristic(String uuid, String value, CallbackContext callbackContext) {
   
   }
   
-  private void monitorCharacteristic(String message, CallbackContext callbackContext) {
+  private void monitorCharacteristic(String uuid, CallbackContext callbackContext) {
   
   }
 

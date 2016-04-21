@@ -4,7 +4,7 @@ var blePM = (function() {
     * Private Variables
     **/
 
-    var BLEStates = [
+    /*var BLEStates = [
             'CBPeripheralManagerStateUnknown',
             'CBPeripheralManagerStateResetting',
             'CBPeripheralManagerStateUnsupported',
@@ -13,7 +13,7 @@ var blePM = (function() {
             'CBPeripheralManagerStatePoweredOn'
         ],
         state;
-
+*/
 
     /**
     * Public Methods
@@ -43,7 +43,7 @@ var blePM = (function() {
             [jsonService]
         );
     }
-
+/*
     function getState() {
         return state;
     }
@@ -147,13 +147,13 @@ var blePM = (function() {
             'startAdvertising',
             [localNameKey]
         );*/
-    }
+    //}
     
 
     /**
     * Pub/Sub Implementation
     **/
-
+/*
     var topics = {};
     var subUid = -1;
 
@@ -198,17 +198,17 @@ var blePM = (function() {
         }
         return this;
     }
-
+*/
     return {
-        addService: addService,
-        getState: getState,
+        addService: addService
+        /*getState: getState,
         removeAllServices: removeAllServices,
         startAdvertising: startAdvertising,
-        stopAdvertising: stopAdvertising,
+        stopAdvertising: stopAdvertising,*/
 
         // Public for the purposes of calling from Objective-C
-        logState: logState,
-        publish: publish
+        //logState: logState,
+        //publish: publish
     };
 
 })();
