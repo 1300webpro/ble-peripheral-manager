@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
+import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -44,9 +45,8 @@ public class BLEPeripheralManager extends CordovaPlugin {
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
   
       if (action.equals("addService")) {
-          Log.v(TAG, "addService");
-          JSONObject services = args.getJSONObject(0);
-          this.addService(services, callbackContext);
+          Log.v(TAG, "addService: "+ args.getJSONObject(0).toString());
+          this.addService(args.getJSONObject(0), callbackContext);
           return true;
       } else if (action.equals("startAdvertising")) {
           this.startAdvertising(args.getString(0), callbackContext);
@@ -73,6 +73,14 @@ public class BLEPeripheralManager extends CordovaPlugin {
 
   private void addService(JSONObject services, CallbackContext callbackContext) {
       if (services != null && services.length() > 0) {
+
+            try {
+                BluetoothGattService service =
+                    new BluetoothGattService(UUID.fromString(services.getString("UUID")), BluetoothGattService.SERVICE_TYPE_PRIMARY);
+            } catch (JSONException e) {
+                callbackContext.error("UUID not found.");
+            }
+          
           callbackContext.success("Yay!");
       } else {
           callbackContext.error("Expected one non-empty string argument.");
@@ -186,6 +194,6 @@ private static final UUID BATTERY_SERVICE_UUID = UUID
   
   private void monitorCharacteristic(String uuid, CallbackContext callbackContext) {
   
-  }
+  };
 
 }

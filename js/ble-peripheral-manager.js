@@ -40,7 +40,9 @@ var blePM = (function() {
             },
             function error(err) {
                 alert('BLE Peripheral Manager Error');
-                errorCallback();
+                if(errorCallback) {
+                    errorCallback(err);
+                }
             },
             'BLEPeripheralManager',
             'addService',
@@ -56,7 +58,7 @@ var blePM = (function() {
         state = BLEStates[BLEstate];
         console.log('BLE state: ', state);
     }
-
+*/
     function removeAllServices() {
         cordova.exec(
             function success() {
@@ -70,7 +72,7 @@ var blePM = (function() {
             []
         );
     }
-
+/*
     function startAdvertising(localNameKey, successCallback, errorCallback) {
         var localNameKey = localNameKey ? localNameKey : 'missing-service-name';
 
