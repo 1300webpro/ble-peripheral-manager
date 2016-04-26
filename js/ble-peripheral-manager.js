@@ -226,7 +226,8 @@ var blePM = (function() {
         removeAllServices: removeAllServices,
         startAdvertising: startAdvertising,
         stopAdvertising: stopAdvertising,
-        changeCharacteristic: changeCharacteristic
+        changeCharacteristic: changeCharacteristic,
+        monitorCharacteristic: monitorCharacteristic
 
         // Public for the purposes of calling from Objective-C
         //logState: logState,
