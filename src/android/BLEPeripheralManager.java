@@ -229,6 +229,8 @@ public class BLEPeripheralManager extends CordovaPlugin {
                             BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE,
                             BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE);
 
+                    bleCharacteristic.setValue(characteristic.getString("value"));
+                    
                     bleService.addCharacteristic(bleCharacteristic);
                 }
                 
@@ -243,18 +245,6 @@ public class BLEPeripheralManager extends CordovaPlugin {
         } else {
             callbackContext.error("Expected one non-empty string argument.");
         }
-        
-        
-        
-        
-/*
-
-    mCharacteristic.addDescriptor(
-        Peripheral.getClientCharacteristicConfigurationDescriptor());
-        */
-  
-    
-
     }
   
     private void startAdvertising(String device_name, CallbackContext callbackContext) {
@@ -264,8 +254,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
             callbackContext.error("BLE Server not started");
             return;
         }
-        
-        
+
         mAdvSettings = new AdvertiseSettings.Builder()
           .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
           .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
@@ -292,25 +281,41 @@ public class BLEPeripheralManager extends CordovaPlugin {
         
         mAdvertiser = mBluetoothAdapter.getBluetoothLeAdvertiser();
         mAdvertiser.startAdvertising(mAdvSettings, mAdvData, mAdvCallback);
+        
+        callbackContext.success("BLE Started");
+        
     }
   
     private void stopAdvertising(CallbackContext callbackContext) {
-        /*if (mGattServer != null) {
+        if (mGattServer != null) {
             mGattServer.close();
         }
         if (mBluetoothAdapter.isEnabled() && mAdvertiser != null) {
             // If stopAdvertising() gets called before close() a null
             // pointer exception is raised.
             mAdvertiser.stopAdvertising(mAdvCallback);
-        }*/
+        }
+        
+        callbackContext.success("BLE Stopped");
     }
   
     private void removeAllServices(CallbackContext callbackContext) {
-
+        bleServices = new ArrayList<BluetoothGattService>();
+        callbackContext.success("Services Removed");
     }
   
     private void changeCharacteristic(String uuid, String value, CallbackContext callbackContext) {
-
+        for(int i =0; i < bleServices.size(); i++){
+            BluetoothGattService bleService = bleServices.get(i);
+            
+            BluetoothGattCharacteristic characteristic = bleService.getCharacteristic(UUID.fromString(uuid));
+            if(characteristic != null){
+                characteristic.setValue(value);
+                callbackContext.success("Characteristic changed");
+            }
+        }
+        
+        callbackContext.error("Not Found");
     }
   
     private void monitorCharacteristic(String uuid, CallbackContext callbackContext) {

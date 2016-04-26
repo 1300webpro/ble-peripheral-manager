@@ -60,11 +60,15 @@ var blePM = (function() {
 */
     function removeAllServices() {
         cordova.exec(
-            function success() {
-                console.log('all services removed');
+            function success(data) {
+                if (successCallback) {
+                    successCallback(data);
+                }
             },
             function error(err) {
-                alert('BLE Peripheral Manager Error');
+                if(errorCallback) {
+                    errorCallback(err);
+                }
             },
             'BLEPeripheralManager',
             'removeAllServices',
@@ -91,14 +95,18 @@ var blePM = (function() {
             [localNameKey]
         );
     }
-/*
+
     function stopAdvertising() {
         cordova.exec(
-            function success() {
-                console.log('stopped advertising');
+            function success(data) {
+                if (successCallback) {
+                    successCallback(data);
+                }
             },
             function error(err) {
-                alert('BLE Peripheral Manager Error');
+                if(errorCallback) {
+                    errorCallback(err);
+                }
             },
             'BLEPeripheralManager',
             'stopAdvertising',
@@ -110,23 +118,30 @@ var blePM = (function() {
         var characteristic_uuid = characteristic_uuid ? characteristic_uuid : '';
         var value = value ? value : '';
     
+        if(characteristic_uuid == ''){
+            if(errorCallback) {
+                errorCallback(err);
+            }
+            return;
+        }
+    
         cordova.exec(
-            function success() {
-                function didStartAdvertising(topic) {
-                    console.log('Characteristic Updated');
-                    if (successCallback) {
-                        successCallback();
-                    }
+            function success(data) {
+                if (successCallback) {
+                    successCallback(data);
                 }
             },
             function error(err) {
-                alert('BLE Peripheral Manager Error');
+                if(errorCallback) {
+                    errorCallback(err);
+                }
             },
             'BLEPeripheralManager',
             'changeCharacteristic',
             [characteristic_uuid,value]
         );
     }
+    /*
 
     function monitorCharacteristic(characteristic_uuid,onChangeCallback, successCallback, errorCallback) {
         /*cordova.exec(
@@ -204,8 +219,9 @@ var blePM = (function() {
         addService: addService,
         //getState: getState,
         removeAllServices: removeAllServices,
-        startAdvertising: startAdvertising
-        /*stopAdvertising: stopAdvertising,*/
+        startAdvertising: startAdvertising,
+        stopAdvertising: stopAdvertising,
+        changeCharacteristic: changeCharacteristic
 
         // Public for the purposes of calling from Objective-C
         //logState: logState,
