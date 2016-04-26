@@ -118,7 +118,12 @@ public class BLEPeripheralManager extends CordovaPlugin {
             String valueToWrite = new String(value);
             int status = characteristic.setValue(valueToWrite)?1:0;
 
-            monitorCharacteristics.get(characteristic).success("Chara Written");
+            if(monitorCharacteristics != null){
+                CallbackContext callback = monitorCharacteristics.get(characteristic);
+                if(callback != null){
+                    callback.success("Charac Written: " +valueToWrite);
+                }
+            }
             
           if (responseNeeded) {
             mGattServer.sendResponse(device, requestId, status,

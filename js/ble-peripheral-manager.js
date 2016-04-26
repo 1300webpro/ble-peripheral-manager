@@ -58,7 +58,7 @@ var blePM = (function() {
         console.log('BLE state: ', state);
     }
 */
-    function removeAllServices() {
+    function removeAllServices(successCallback, errorCallback) {
         cordova.exec(
             function success(data) {
                 if (successCallback) {
@@ -96,7 +96,7 @@ var blePM = (function() {
         );
     }
 
-    function stopAdvertising() {
+    function stopAdvertising(successCallback, errorCallback) {
         cordova.exec(
             function success(data) {
                 if (successCallback) {
