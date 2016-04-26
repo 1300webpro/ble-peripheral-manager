@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
+import android.os.ParcelUuid;
 import android.content.Context;
 
 import android.bluetooth.BluetoothAdapter;
@@ -46,7 +46,9 @@ public class BLEPeripheralManager extends CordovaPlugin {
     private AdvertiseSettings mAdvSettings;
     private BluetoothLeAdvertiser mAdvertiser;
     
-    private ArrayList bleServices;
+    private ArrayList<BluetoothGattService> bleServices;
+    
+    private Context context;
     
     /*private final BluetoothGattServerCallback mGattServerCallback = new BluetoothGattServerCallback() {
         @Override
@@ -136,9 +138,12 @@ public class BLEPeripheralManager extends CordovaPlugin {
         super.initialize(cordova, webView);
         // your init code here
         
-        mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        context = cordova.getActivity().getApplicationContext();
+        //Intent intent=new Intent(context,Next_Activity.class);
+        mBluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
         
+        bleServices = new ArrayList<BluetoothGattService>();
     }
 
     
@@ -186,7 +191,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
 
                     BluetoothGattCharacteristic bleCharacteristic =
                         new BluetoothGattCharacteristic(
-                            UUID.fromString(service.getString("UUID")),
+                            UUID.fromString(characteristic.getString("UUID")),
                             BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE,
                             BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE);
 
@@ -200,7 +205,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
                 callbackContext.error("Missing elements: "+e.getMessage());
             }
 
-            callbackContext.success("Yay!");
+            callbackContext.success("Service added");
         } else {
             callbackContext.error("Expected one non-empty string argument.");
         }
@@ -220,7 +225,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
   
     private void startAdvertising(String device_name, CallbackContext callbackContext) {
 
-        mGattServer = mBluetoothManager.openGattServer(this/*, mGattServerCallback*/);
+        mGattServer = mBluetoothManager.openGattServer(context, null/*mGattServerCallback*/);
         if (mGattServer == null) {
           callbackContext.error("BLE Server not started");
         }
@@ -232,22 +237,26 @@ public class BLEPeripheralManager extends CordovaPlugin {
           .setConnectable(true)
           .build();
         
+        
+        AdvertiseData.Builder mAdvDataBuilder  = new AdvertiseData.Builder()
+          .setIncludeDeviceName(true)
+          .setIncludeTxPowerLevel(true);
+        
         // Add a service for a total of three services (Generic Attribute and Generic Access
         // are present by default).
-        Iterator loop = bleServices.iterator();
-        while( loop.hasNext() ){
-            mGattServer.addService(loop.next());
+        for(int i =0; i < bleServices.size(); i++){
+            BluetoothGattService bleService = bleServices.get(i);
+            mGattServer.addService(bleService);
+            
+            ParcelUuid uuid = new ParcelUuid(bleService.getUuid());
+            
+            mAdvDataBuilder.addServiceUuid(uuid);
         }
-
         
-        mAdvData = new AdvertiseData.Builder()
-          .setIncludeDeviceName(true)
-          .setIncludeTxPowerLevel(true)
-          .addServiceUuid(bleServices.get(0).getServiceUUID())
-          .build();
+        mAdvData = mAdvDataBuilder.build();
         
         mAdvertiser = mBluetoothAdapter.getBluetoothLeAdvertiser();
-        mAdvertiser.startAdvertising(mAdvSettings, mAdvData);
+        mAdvertiser.startAdvertising(mAdvSettings, mAdvData, null);
     }
   
     private void stopAdvertising(CallbackContext callbackContext) {
