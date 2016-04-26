@@ -141,29 +141,34 @@ var blePM = (function() {
             [characteristic_uuid,value]
         );
     }
-    /*
+    
 
     function monitorCharacteristic(characteristic_uuid,onChangeCallback, successCallback, errorCallback) {
-        /*cordova.exec(
-            function success() {
-                function didStartAdvertising(topic) {
-                    console.log('Peripheral Manager Did Start Advertising');
-                    unsubscribe(subscription);
-                    if (successCallback) {
-                        successCallback();
-                    }
+        var characteristic_uuid = characteristic_uuid ? characteristic_uuid : '';
+    
+        if(characteristic_uuid == ''){
+            if(errorCallback) {
+                errorCallback(err);
+            }
+            return;
+        }
+    
+        cordova.exec(
+            function success(data) {
+                if (successCallback) {
+                    successCallback(data);
                 }
-
-                var subscription = subscribe('didStartAdvertising', didStartAdvertising);
             },
             function error(err) {
-                alert('BLE Peripheral Manager Error');
+                if(errorCallback) {
+                    errorCallback(err);
+                }
             },
             'BLEPeripheralManager',
-            'startAdvertising',
-            [localNameKey]
-        );*/
-    //}
+            'changeCharacteristic',
+            [characteristic_uuid]
+        );
+    }
     
 
     /**

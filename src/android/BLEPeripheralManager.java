@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import android.util.Log;
 import java.util.UUID; 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import android.os.ParcelUuid;
@@ -47,6 +49,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
     private BluetoothLeAdvertiser mAdvertiser;
     
     private ArrayList<BluetoothGattService> bleServices;
+    private Map<BluetoothGattCharacteristic, CallbackContext> monitorCharacteristics;
     
     private Context context;
     
@@ -83,16 +86,15 @@ public class BLEPeripheralManager extends CordovaPlugin {
         @Override
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
             BluetoothGattCharacteristic characteristic) {
-          /*super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
+          super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
           Log.d(TAG, "Device tried to read characteristic: " + characteristic.getUuid());
-          Log.d(TAG, "Value: " + Arrays.toString(characteristic.getValue()));
           if (offset != 0) {
             mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_INVALID_OFFSET, offset,
-                /* value (optional) */ /*null);
+                /* value (optional) */ null);
             return;
           }
           mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,
-              offset, characteristic.getValue());*/
+              offset, characteristic.getValue());
         }
 
         @Override
@@ -104,31 +106,40 @@ public class BLEPeripheralManager extends CordovaPlugin {
         @Override
         public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId,
             BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded,
-            int offset, byte[] value) {/*
+            int offset, byte[] value) {
           super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite,
               responseNeeded, offset, value);
-          Log.v(TAG, "Characteristic Write request: " + Arrays.toString(value));
-          int status = mCurrentServiceFragment.writeCharacteristic(characteristic, offset, value);
+          if (offset != 0) {
+            mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_INVALID_OFFSET, offset,
+                /* value (optional) */ null);
+            return;
+          }
+          
+            String valueToWrite = new String(value);
+            int status = characteristic.setValue(valueToWrite)?1:0;
+
+            monitorCharacteristics.get(characteristic).success("Chara Written");
+            
           if (responseNeeded) {
             mGattServer.sendResponse(device, requestId, status,
-                /* No need to respond with an offset */// 0,
-                /* No need to respond with a value *//* null);
-          }*/
+                /* No need to respond with an offset */ 0,
+                /* No need to respond with a value */ null);
+          }
         }
 
         @Override
         public void onDescriptorWriteRequest(BluetoothDevice device, int requestId,
             BluetoothGattDescriptor descriptor, boolean preparedWrite, boolean responseNeeded,
             int offset,
-            byte[] value) {/*
-          Log.v(TAG, "Descriptor Write Request " + descriptor.getUuid() + " " + Arrays.toString(value));
+            byte[] value) {
+          Log.v(TAG, "Descriptor Write Request " + descriptor.getUuid());
           super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded,
               offset, value);
           if(responseNeeded) {
             mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,
-                /* No need to respond with offset */ //0,
-                /* No need to respond with a value *//* null);
-          }*/
+                /* No need to respond with offset */ 0,
+                /* No need to respond with a value */ null);
+          }
         }
     };
     
@@ -178,6 +189,10 @@ public class BLEPeripheralManager extends CordovaPlugin {
         mBluetoothAdapter = mBluetoothManager.getAdapter();
         
         bleServices = new ArrayList<BluetoothGattService>();
+        
+        Map<BluetoothGattCharacteristic, CallbackContext> monitorCharacteristics = new HashMap<BluetoothGattCharacteristic, CallbackContext>();
+
+        
     }
 
     
@@ -312,6 +327,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
             if(characteristic != null){
                 characteristic.setValue(value);
                 callbackContext.success("Characteristic changed");
+                return;
             }
         }
         
@@ -320,6 +336,18 @@ public class BLEPeripheralManager extends CordovaPlugin {
   
     private void monitorCharacteristic(String uuid, CallbackContext callbackContext) {
 
+        for(int i =0; i < bleServices.size(); i++){
+            BluetoothGattService bleService = bleServices.get(i);
+            
+            BluetoothGattCharacteristic characteristic = bleService.getCharacteristic(UUID.fromString(uuid));
+            if(characteristic != null){
+                monitorCharacteristics.put(characteristic, callbackContext);
+                return;
+            }
+        }
+        
+        callbackContext.error("Not Found");
+        
     }
 
 }
