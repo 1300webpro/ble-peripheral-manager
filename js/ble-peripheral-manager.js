@@ -201,11 +201,11 @@ var blePM = (function() {
     }
 */
     return {
-        addService: addService
-        /*getState: getState,
+        addService: addService,
+        //getState: getState,
         removeAllServices: removeAllServices,
-        startAdvertising: startAdvertising,
-        stopAdvertising: stopAdvertising,*/
+        startAdvertising: startAdvertising
+        /*stopAdvertising: stopAdvertising,*/
 
         // Public for the purposes of calling from Objective-C
         //logState: logState,

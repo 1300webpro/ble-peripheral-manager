@@ -50,10 +50,10 @@ public class BLEPeripheralManager extends CordovaPlugin {
     
     private Context context;
     
-    /*private final BluetoothGattServerCallback mGattServerCallback = new BluetoothGattServerCallback() {
+    private final BluetoothGattServerCallback mGattServerCallback = new BluetoothGattServerCallback() {
         @Override
         public void onConnectionStateChange(BluetoothDevice device, final int status, int newState) {
-          super.onConnectionStateChange(device, status, newState);
+          /*super.onConnectionStateChange(device, status, newState);
           if (status == BluetoothGatt.GATT_SUCCESS) {
             if (newState == BluetoothGatt.STATE_CONNECTED) {
               mBluetoothDevices.add(device);
@@ -77,22 +77,22 @@ public class BLEPeripheralManager extends CordovaPlugin {
               }
             });
             Log.e(TAG, "Error when connecting: " + status);
-          }
+          }*/
         }
 
         @Override
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
             BluetoothGattCharacteristic characteristic) {
-          super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
+          /*super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
           Log.d(TAG, "Device tried to read characteristic: " + characteristic.getUuid());
           Log.d(TAG, "Value: " + Arrays.toString(characteristic.getValue()));
           if (offset != 0) {
             mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_INVALID_OFFSET, offset,
-                /* value (optional) *//* null);
+                /* value (optional) */ /*null);
             return;
           }
           mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,
-              offset, characteristic.getValue());
+              offset, characteristic.getValue());*/
         }
 
         @Override
@@ -104,7 +104,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
         @Override
         public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId,
             BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded,
-            int offset, byte[] value) {
+            int offset, byte[] value) {/*
           super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite,
               responseNeeded, offset, value);
           Log.v(TAG, "Characteristic Write request: " + Arrays.toString(value));
@@ -112,25 +112,59 @@ public class BLEPeripheralManager extends CordovaPlugin {
           if (responseNeeded) {
             mGattServer.sendResponse(device, requestId, status,
                 /* No need to respond with an offset */// 0,
-                /* No need to respond with a value */ /*null);
-          }
+                /* No need to respond with a value *//* null);
+          }*/
         }
 
         @Override
         public void onDescriptorWriteRequest(BluetoothDevice device, int requestId,
             BluetoothGattDescriptor descriptor, boolean preparedWrite, boolean responseNeeded,
             int offset,
-            byte[] value) {
+            byte[] value) {/*
           Log.v(TAG, "Descriptor Write Request " + descriptor.getUuid() + " " + Arrays.toString(value));
           super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded,
               offset, value);
           if(responseNeeded) {
             mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,
-                /* No need to respond with offset */// 0,
-                /* No need to respond with a value */ /*null);
-          }
+                /* No need to respond with offset */ //0,
+                /* No need to respond with a value *//* null);
+          }*/
         }
-    };*/
+    };
+    
+    
+    private final AdvertiseCallback mAdvCallback = new AdvertiseCallback() {
+        @Override
+        public void onStartFailure(int errorCode) {
+            super.onStartFailure(errorCode);
+            Log.e(TAG, "Not broadcasting: " + errorCode);
+            switch (errorCode) {
+              case ADVERTISE_FAILED_ALREADY_STARTED:
+                Log.w(TAG, "App was already advertising");
+                break;
+              case ADVERTISE_FAILED_DATA_TOO_LARGE:
+                Log.w(TAG, "ADVERTISE_FAILED_DATA_TOO_LARGE");
+                break;
+              case ADVERTISE_FAILED_FEATURE_UNSUPPORTED:
+                Log.w(TAG, "ADVERTISE_FAILED_FEATURE_UNSUPPORTED");
+                break;
+              case ADVERTISE_FAILED_INTERNAL_ERROR:
+                Log.w(TAG, "ADVERTISE_FAILED_INTERNAL_ERROR");
+                break;
+              case ADVERTISE_FAILED_TOO_MANY_ADVERTISERS:
+                Log.w(TAG, "ADVERTISE_FAILED_TOO_MANY_ADVERTISERS");
+                break;
+              default:
+                Log.wtf(TAG, "Unhandled error: " + errorCode);
+            }
+        }
+
+        @Override
+        public void onStartSuccess(AdvertiseSettings settingsInEffect) {
+            super.onStartSuccess(settingsInEffect);
+            Log.v(TAG, "Broadcasting");
+        }
+    };
 
     
     @Override
@@ -225,9 +259,10 @@ public class BLEPeripheralManager extends CordovaPlugin {
   
     private void startAdvertising(String device_name, CallbackContext callbackContext) {
 
-        mGattServer = mBluetoothManager.openGattServer(context, null/*mGattServerCallback*/);
+        mGattServer = mBluetoothManager.openGattServer(context, mGattServerCallback);
         if (mGattServer == null) {
-          callbackContext.error("BLE Server not started");
+            callbackContext.error("BLE Server not started");
+            return;
         }
         
         
@@ -239,7 +274,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
         
         
         AdvertiseData.Builder mAdvDataBuilder  = new AdvertiseData.Builder()
-          .setIncludeDeviceName(true)
+          .setIncludeDeviceName(false)
           .setIncludeTxPowerLevel(true);
         
         // Add a service for a total of three services (Generic Attribute and Generic Access
@@ -256,7 +291,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
         mAdvData = mAdvDataBuilder.build();
         
         mAdvertiser = mBluetoothAdapter.getBluetoothLeAdvertiser();
-        mAdvertiser.startAdvertising(mAdvSettings, mAdvData, null);
+        mAdvertiser.startAdvertising(mAdvSettings, mAdvData, mAdvCallback);
     }
   
     private void stopAdvertising(CallbackContext callbackContext) {
