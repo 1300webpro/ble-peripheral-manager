@@ -39,7 +39,6 @@ var blePM = (function() {
                 //var subscription = subscribe('didAddService', serviceAdded);
             },
             function error(err) {
-                alert('BLE Peripheral Manager Error');
                 if(errorCallback) {
                     errorCallback(err);
                 }
@@ -72,31 +71,27 @@ var blePM = (function() {
             []
         );
     }
-/*
+
     function startAdvertising(localNameKey, successCallback, errorCallback) {
         var localNameKey = localNameKey ? localNameKey : 'missing-service-name';
 
         cordova.exec(
-            function success() {
-                function didStartAdvertising(topic) {
-                    console.log('Peripheral Manager Did Start Advertising');
-                    unsubscribe(subscription);
-                    if (successCallback) {
-                        successCallback();
-                    }
+            function success(data) {
+                if (successCallback) {
+                    successCallback(data);
                 }
-
-                var subscription = subscribe('didStartAdvertising', didStartAdvertising);
             },
             function error(err) {
-                alert('BLE Peripheral Manager Error');
+                if(errorCallback) {
+                    errorCallback(err);
+                }
             },
             'BLEPeripheralManager',
             'startAdvertising',
             [localNameKey]
         );
     }
-
+/*
     function stopAdvertising() {
         cordova.exec(
             function success() {
