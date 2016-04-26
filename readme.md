@@ -7,7 +7,7 @@ This plugin is only for Bluetooth Peripheral Manager functionality. If you're lo
 ### blePM.addService(service, successCallback)
 
 Creates a service from an object you pass. All object parameters are required. You may call this multiple times to add multiple services, but all services must be added before you start advertising. This method is asynchronous, so pass a function to the success callback for any code you may need to run after the service has been added, which includes the startAdvertising method.
-
+Characteristics have a 128 byte limit (Possibily).
 #### Parameters:
 
 - UUID: A UUID string. Create by running 'uuidgen' on the command line.

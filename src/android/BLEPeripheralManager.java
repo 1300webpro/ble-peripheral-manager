@@ -195,7 +195,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
         
         bleServices = new ArrayList<BluetoothGattService>();
         
-        Map<BluetoothGattCharacteristic, CallbackContext> monitorCharacteristics = new HashMap<BluetoothGattCharacteristic, CallbackContext>();
+        monitorCharacteristics = new HashMap<BluetoothGattCharacteristic, CallbackContext>();
 
         
     }
