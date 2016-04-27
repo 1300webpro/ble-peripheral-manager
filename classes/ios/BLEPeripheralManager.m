@@ -10,15 +10,16 @@
 
 @implementation BLEPeripheralManager {
     CBPeripheralManager *_peripheralManager;
+    NSMutableDictionary *monitorList;
 }
 
 - (void)pluginInitialize {
     [super pluginInitialize];
     
     _peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil];
+    monitorList = [[NSMutableDictionary alloc] init];
+
 }
-
-
 
 - (void)addService:(CDVInvokedUrlCommand *)command {
     NSMutableArray *characteristics = [[NSMutableArray alloc] init];
@@ -91,6 +92,12 @@
 }
 
 -(void)changeCharacteristic:(CDVInvokedUrlCommand *)command {
+
+      CDVPluginResult *pluginResult;
+    
+      pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
+
+
       NSData *updatedValue = [command.arguments objectAtIndex:1];// fetch the characteristic's new value as the second argument
       
       //Find characteristic based on the uuid
@@ -107,19 +114,89 @@
 
       //If the characteristic isn't null, then proceed with the update
       if(characteristic != [NSNull null]){
+      
+        NSString *value = [command.arguments objectAtIndex:1];
+        NSData *dataValue = [value dataUsingEncoding:NSUTF8StringEncoding];
+        /*characteristic.value = dataValue*/
+      
 
-        //Update the value with the new value
-        BOOL didSendValue = [_peripheralManager updateValue:updatedValue
-
-          forCharacteristic:characteristic onSubscribedCentrals:nil];
+        //Update the value with the new value      
+        BOOL didSendValue = [_peripheralManager updateValue:forCharacteristic:onSubscribedCentrals: [updateValue:dataValue forCharacteristic:characteristic onSubscribedCentrals:nil]];
       }
       
       [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 -(void)monitorCharacteristic:(CDVInvokedUrlCommand *)command {
-
+    [monitorList setObject:command.callbackId forKey:[command.arguments objectAtIndex:0]];
 }
+
+
+
+
+#pragma mark - Peripheral Methods
+
+- (void) peripheralManager:(CBPeripheralManager *)peripheral didAddService:(CBService *)service error:(NSError *)error {
+    NSLog(@"Added service %@", [service UUID]);
+    if (error) {
+        NSLog(@"There was an error adding service");
+        NSLog(@"%@", error);
+    }
+}
+
+- (void) peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral error:(NSError *)error {
+    NSLog(@"Started advertising");
+    if (error) {
+        NSLog(@"There was an error advertising");
+        NSLog(@"%@", error);
+    }
+    
+}
+
+
+
+
+/*-(void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveReadRequest:(CBATTRequest *)request {
+    NSLog(@"Received read request for %@", [request characteristic]);
+    
+    // TODO real code should check offsets and handle errors
+    if ([request.characteristic.UUID isEqual:_switchCharacteristic.UUID]) {
+        
+        request.value = [_switchCharacteristic.value
+                         subdataWithRange:NSMakeRange(request.offset,
+                                                      _switchCharacteristic.value.length - request.offset)];
+        
+    } else if ([request.characteristic.UUID isEqual:_dimmerCharacteristic.UUID]) {
+        request.value = _dimmerCharacteristic.value;
+
+    }
+    
+    [_peripheralManager respondToRequest:request withResult:CBATTErrorSuccess];
+}*/
+
+-(void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveWriteRequests:(NSArray *)requests
+{
+    NSLog(@"Received %lu write request(s)", (unsigned long)[requests count]);
+    
+    // TODO real code needs to handle multiple requests (but only send one result)
+    CBATTRequest *request = [requests firstObject];
+
+    NSString *callbackId = monitorList[request.characteristic.UUID.Uuid];
+    
+    if(callbackId != [NSNull null]){
+    
+        NSData *value = [request value];
+        NSData *stringValue = NSString* stringValue = [[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding];
+        
+        CDVPluginResult *pluginResult;
+    
+        pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString:stringValue];
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+    }
+}
+
+
 
 
 /*
@@ -135,6 +212,9 @@ peripheral
     
     }
 */
+
+
+/*
 #pragma mark - CBPeripheralManagerDelegate
 
 - (void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral {
@@ -161,5 +241,6 @@ peripheral
     NSString *js = [NSString stringWithFormat:@"BLEPeripheralManager.publish('didStartAdvertising');"];
     [self.commandDelegate evalJs:js];
 }
+*/
 
 @end
