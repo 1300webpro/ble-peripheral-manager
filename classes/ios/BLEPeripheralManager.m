@@ -11,6 +11,7 @@
 @implementation BLEPeripheralManager {
     CBPeripheralManager *_peripheralManager;
     NSMutableDictionary *monitorList;
+    NSMutableArray *serviceList;
 }
 
 - (void)pluginInitialize {
@@ -18,6 +19,7 @@
     
     _peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil];
     monitorList = [[NSMutableDictionary alloc] init];
+    serviceList = [[NSMutableArray alloc] init];
 
 }
 
@@ -47,6 +49,8 @@
     NSArray *immutableCharacteristics = [characteristics copy];
 
     service.characteristics = immutableCharacteristics;
+
+    [serviceList addObject:service];
 
     [_peripheralManager addService:service];
     
@@ -88,6 +92,9 @@
     
     [_peripheralManager removeAllServices];
     
+    //Reset the service list
+    [serviceList removeAllObjects];
+    
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
@@ -96,16 +103,13 @@
       CDVPluginResult *pluginResult;
     
       pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
-
-
-      NSData *updatedValue = [command.arguments objectAtIndex:1];// fetch the characteristic's new value as the second argument
       
       //Find characteristic based on the uuid
       CBMutableCharacteristic *characteristic;
       
-      for (NSArray *services in _peripheralManager.service.characteristics) {
-          for (NSArray *characteristics in services) {
-            if (characteristics.UUID.Uuid == [command.arguments objectAtIndex:0]) {
+      for (CBMutableService *service in serviceList) {
+          for (CBMutableCharacteristic *characteristics in service.characteristics) {
+            if (characteristics.UUID.UUIDString == [command.arguments objectAtIndex:0]) {
                 characteristic = characteristics;
                 break;
             }
@@ -113,15 +117,15 @@
       }
 
       //If the characteristic isn't null, then proceed with the update
-      if(characteristic != [NSNull null]){
+      if(![characteristic isEqual:[NSNull null]]){
       
-        NSString *value = [command.arguments objectAtIndex:1];
+        NSString *value = [command.arguments objectAtIndex:1];// fetch the characteristic's new value as the second argument
         NSData *dataValue = [value dataUsingEncoding:NSUTF8StringEncoding];
         /*characteristic.value = dataValue*/
       
 
         //Update the value with the new value      
-        BOOL didSendValue = [_peripheralManager updateValue:forCharacteristic:onSubscribedCentrals: [updateValue:dataValue forCharacteristic:characteristic onSubscribedCentrals:nil]];
+        BOOL didSendValue = [_peripheralManager updateValue:dataValue forCharacteristic:characteristic onSubscribedCentrals:nil];
       }
       
       [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -181,12 +185,12 @@
     // TODO real code needs to handle multiple requests (but only send one result)
     CBATTRequest *request = [requests firstObject];
 
-    NSString *callbackId = monitorList[request.characteristic.UUID.Uuid];
+    NSString *callbackId = monitorList[request.characteristic.UUID.UUIDString];
     
-    if(callbackId != [NSNull null]){
+    if(![callbackId isEqual:[NSNull null]]){
     
         NSData *value = [request value];
-        NSData *stringValue = NSString* stringValue = [[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding];
+        NSString *stringValue = [[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding];
         
         CDVPluginResult *pluginResult;
     

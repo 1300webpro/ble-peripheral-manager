@@ -121,7 +121,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
             if(monitorCharacteristics != null){
                 CallbackContext callback = monitorCharacteristics.get(characteristic);
                 if(callback != null){
-                    callback.success("Charac Written: " +valueToWrite);
+                    callback.success("{\""+characteristic.getUuid().toString()+"\":\""+valueToWrite+"\"}");
                 }
             }
             
@@ -236,18 +236,29 @@ public class BLEPeripheralManager extends CordovaPlugin {
             Log.v(TAG, "addService: " + service.toString());
             try {
                 
+                if(characteristic.getBool('primary')){
+                    int service_type = BluetoothGattService.SERVICE_TYPE_PRIMARY;
+                } else {
+                    int service_type = BluetoothGattService.SERVICE_TYPE_SECONDARY;
+                }
+                
                 BluetoothGattService bleService =
-                    new BluetoothGattService(UUID.fromString(service.getString("UUID")), BluetoothGattService.SERVICE_TYPE_PRIMARY);
+                    new BluetoothGattService(UUID.fromString(service.getString("UUID")), service_type);
                 
                 JSONArray characteristics = service.getJSONArray("characteristics");
                 for(int i =0; i < characteristics.length(); i++){
                     JSONObject characteristic = new JSONObject(characteristics.getString(i));
-
+                    
+                    if(characteristic.getBool('write')){
+                        int prop = BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE;
+                        int perm = BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE;
+                    } else {
+                        int prop = BluetoothGattCharacteristic.PROPERTY_READ;
+                        int perm = BluetoothGattCharacteristic.PERMISSION_READ;
+                    }
+                    
                     BluetoothGattCharacteristic bleCharacteristic =
-                        new BluetoothGattCharacteristic(
-                            UUID.fromString(characteristic.getString("UUID")),
-                            BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE,
-                            BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE);
+                        new BluetoothGattCharacteristic(UUID.fromString(characteristic.getString("UUID")),prop,perm);
 
                     bleCharacteristic.setValue(characteristic.getString("value"));
                     
