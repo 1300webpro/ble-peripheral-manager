@@ -65,7 +65,9 @@
     CDVPluginResult *pluginResult;
     
     if (_peripheralManager.state == CBPeripheralManagerStatePoweredOn) {
-        NSDictionary *advertisingData = @{CBAdvertisementDataLocalNameKey: [command.arguments objectAtIndex:0], CBAdvertisementDataServiceUUIDsKey: @[[CBUUID UUIDWithString:CBUUIDGenericAccessProfileString]]};
+        CBMutableService *service = [serviceList objectAtIndex:0];
+        
+        NSDictionary *advertisingData = @{CBAdvertisementDataLocalNameKey: [command.arguments objectAtIndex:0], CBAdvertisementDataServiceUUIDsKey: service.UUID};
         
         [_peripheralManager startAdvertising:advertisingData];
         
@@ -200,7 +202,12 @@
     }
 }
 
+#pragma mark - CBPeripheralManagerDelegate
 
+- (void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral {
+    
+    NSLog(@"state: %i", peripheral.state);
+}
 
 
 /*
