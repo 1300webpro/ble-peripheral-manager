@@ -235,11 +235,11 @@ public class BLEPeripheralManager extends CordovaPlugin {
         if (service != null && service.length() > 0) {
             Log.v(TAG, "addService: " + service.toString());
             try {
-                
-                if(characteristic.getBool("primary")){
-                    int service_type = BluetoothGattService.SERVICE_TYPE_PRIMARY;
+                int service_type = 0;
+                if(service.getBool("primary")){
+                    service_type = BluetoothGattService.SERVICE_TYPE_PRIMARY;
                 } else {
-                    int service_type = BluetoothGattService.SERVICE_TYPE_SECONDARY;
+                    service_type = BluetoothGattService.SERVICE_TYPE_SECONDARY;
                 }
                 
                 BluetoothGattService bleService =
@@ -249,12 +249,14 @@ public class BLEPeripheralManager extends CordovaPlugin {
                 for(int i =0; i < characteristics.length(); i++){
                     JSONObject characteristic = new JSONObject(characteristics.getString(i));
                     
-                    if(characteristic.getBool("write")){
-                        int prop = BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE;
-                        int perm = BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE;
+                    int prop = 0;
+                    int perm = 0;
+                    if(characteristic.getBoolean("write")){
+                        prop = BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE;
+                        perm = BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE;
                     } else {
-                        int prop = BluetoothGattCharacteristic.PROPERTY_READ;
-                        int perm = BluetoothGattCharacteristic.PERMISSION_READ;
+                        prop = BluetoothGattCharacteristic.PROPERTY_READ;
+                        perm = BluetoothGattCharacteristic.PERMISSION_READ;
                     }
                     
                     BluetoothGattCharacteristic bleCharacteristic =
