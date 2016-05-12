@@ -236,7 +236,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
             Log.v(TAG, "addService: " + service.toString());
             try {
                 
-                if(characteristic.getBool('primary')){
+                if(characteristic.getBool("primary")){
                     int service_type = BluetoothGattService.SERVICE_TYPE_PRIMARY;
                 } else {
                     int service_type = BluetoothGattService.SERVICE_TYPE_SECONDARY;
@@ -249,7 +249,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
                 for(int i =0; i < characteristics.length(); i++){
                     JSONObject characteristic = new JSONObject(characteristics.getString(i));
                     
-                    if(characteristic.getBool('write')){
+                    if(characteristic.getBool("write")){
                         int prop = BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE;
                         int perm = BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE;
                     } else {
