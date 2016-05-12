@@ -236,7 +236,7 @@ public class BLEPeripheralManager extends CordovaPlugin {
             Log.v(TAG, "addService: " + service.toString());
             try {
                 int service_type = 0;
-                if(service.getBool("primary")){
+                if(service.getBoolean("primary")){
                     service_type = BluetoothGattService.SERVICE_TYPE_PRIMARY;
                 } else {
                     service_type = BluetoothGattService.SERVICE_TYPE_SECONDARY;
