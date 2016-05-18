@@ -145,7 +145,6 @@ var blePM = (function() {
 
     function monitorCharacteristic(characteristic_uuid,onChangeCallback, successCallback, errorCallback) {
         var characteristic_uuid = characteristic_uuid ? characteristic_uuid : '';
-        alert(characteristic_uuid);
         if(characteristic_uuid == ''){
             if(errorCallback) {
                 errorCallback(err);
