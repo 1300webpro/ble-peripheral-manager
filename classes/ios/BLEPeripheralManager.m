@@ -113,7 +113,13 @@
 
 
 - (void)stopAdvertising:(CDVInvokedUrlCommand *)command {
+    CDVPluginResult *pluginResult;
+
     [_peripheralManager stopAdvertising];
+    
+    pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 
@@ -121,12 +127,12 @@
 - (void)removeAllServices:(CDVInvokedUrlCommand *)command {
     CDVPluginResult *pluginResult;
     
-    pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
-    
     [_peripheralManager removeAllServices];
     
     //Reset the service list
     [serviceList removeAllObjects];
+    
+    pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
